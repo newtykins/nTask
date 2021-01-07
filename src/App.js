@@ -13,6 +13,7 @@ export default class App extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.addTodo = this.addTodo.bind(this);
+    this.delTodo = this.delTodo.bind(this);
   }
 
   componentDidMount() {
@@ -20,8 +21,7 @@ export default class App extends React.Component {
     Object.keys(localStorage).forEach(id => {
       todos.push({ id, value: localStorage[id] });
     });
-    this.setState(todos);
-    console.log(todos, this.state);
+    this.setState({ todos });
   }
 
   handleChange(e) {
@@ -30,11 +30,26 @@ export default class App extends React.Component {
   
   addTodo() {
     const { value, todos } = this.state;
+
+    // add it
     const id = shortid.generate();
     const newTodos = todos.concat({ id, value });
 
+    // update the state and local storage
     this.setState({ todos: newTodos, value: '' });
     localStorage.setItem(id, value);
+  }
+
+  delTodo(id) {
+    const { todos } = this.state;
+
+    // remove it
+    const i = todos.map(e => e.id).indexOf(id);
+    const newTodos = todos.slice(0, i).concat(todos.slice(-i));
+
+    // update the state and local storage
+    this.setState({ todos: newTodos });
+    localStorage.removeItem(id);
   }
 
   render() {
